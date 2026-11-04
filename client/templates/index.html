@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Python MVC kết hợp Node.js API</title>
+</head>
+<body>
+    <h1>Danh sách công việc (Từ Node.js API)</h1>
+    
+    <ul>
+        {% for todo in todos %}
+            <li>{{ todo.title }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Thêm công việc mới</h3>
+    <form action="/add" method="POST">
+        <input type="text" name="title" placeholder="Nhập tên công việc..." required>
+        <button type="submit">Thêm</button>
+    </form>
+</body>
+</html>
