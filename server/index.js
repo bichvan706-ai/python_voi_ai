@@ -55,6 +55,50 @@ app.get('/customers/:id', async (req, res) => {
     res.status(500).send('Lỗi truy vấn: ' + err.message);
   }
 });
+app.post('/customers/add', async (req, res) => {
+    try {
+        const { id, name, age } = req.body;
+		console.log(id)
+		console.log(name)
+		console.log(age)
+
+        // Kiểm tra dữ liệu bắt buộc
+        if (!name) {
+            return res.status(400).json({ error: 'Tên khách hàng là bắt buộc!' });
+        }
+
+        // 1. Kết nối vào database polyMartdb
+        let pool = await sql.connect(dbConfig);
+
+        // 2. Thực thi câu lệnh SQL INSERT vào bảng customers
+        // Giả sử bảng customers có các cột: name, email, phone
+        let result = await pool.request()
+			.input('id', sql.NVarChar, id)
+            .input('name', sql.NVarChar, name)
+            .input('age', sql.VarChar, age || '')
+            .query(`
+                INSERT INTO customers (CustomerID, CustomerName, Age) 
+                OUTPUT INSERTED.* 
+                VALUES (@id,@name, @age)
+            `);
+
+        // Lấy thông tin bản ghi vừa được thêm thành công
+        const newCustomer = result.recordset[0];
+
+        return res.status(201).json({
+            success: true,
+            message: 'Thêm khách hàng vào polyMartdb thành công!',
+            data: newCustomer
+        });
+
+    } catch (error) {
+        console.error('Lỗi khi thêm khách hàng vào database:', error);
+        return res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+});
 
 // ==========================================
 // CODE CHO TRANG 404 (Phải đặt ở cuối cùng)

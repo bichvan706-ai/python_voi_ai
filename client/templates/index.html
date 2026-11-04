@@ -2,21 +2,50 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Python MVC kết hợp Node.js API</title>
+    <title>Quản lý Khách hàng</title>
 </head>
 <body>
-    <h1>Danh sách công việc (Từ Node.js API)</h1>
+    <h1>Danh sách Khách hàng</h1>
     
-    <ul>
-        {% for todo in todos %}
-            <li>{{ todo.title }}</li>
-        {% endfor %}
-    </ul>
+    <!-- Form thêm khách hàng mới -->
+    <fieldset style="width: 300px; margin-bottom: 20px;">
+        <legend><b>Thêm khách hàng mới</b></legend>
+        <form action="/customers/add" method="POST">
+            <p>
+                ID khách hàng: <br>
+                <input type="text" name="id" required>
+            </p>
+            <p>
+                Tên: <br>
+                <input type="text" name="name" required>
+            </p>
+           
+            <p>
+               Tuổi: <br>
+                <input type="text" name="age">
+            </p>
+            <button type="submit">Lưu khách hàng</button>
+        </form>
+    </fieldset>
 
-    <h3>Thêm công việc mới</h3>
-    <form action="/add" method="POST">
-        <input type="text" name="title" placeholder="Nhập tên công việc..." required>
-        <button type="submit">Thêm</button>
-    </form>
+    <!-- Hiển thị danh sách -->
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Tuổi</th>
+           
+        </tr>
+        {% for cus in customers %}
+        <tr>
+            <td>{{ cus.id }}</td>
+            <td>{{ cus.name }}</td>
+            <td>{{ cus.age }}</td>
+     
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="/">Về trang chủ</a>
 </body>
 </html>
