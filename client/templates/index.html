@@ -10,7 +10,7 @@
     <!-- Form thêm khách hàng mới -->
     <fieldset style="width: 300px; margin-bottom: 20px;">
         <legend><b>Thêm khách hàng mới</b></legend>
-        <form action="/customers/add" method="POST">
+        <form action="/customers/add" method="POST" enctype="multipart/form-data">
             <p>
                 ID khách hàng: <br>
                 <input type="text" name="id" required>
@@ -19,11 +19,22 @@
                 Tên: <br>
                 <input type="text" name="name" required>
             </p>
-           
             <p>
                Tuổi: <br>
                 <input type="text" name="age">
             </p>
+            
+            <!-- Thêm trường upload hình ảnh -->
+            <p>
+                Hình ảnh: <br>
+                <input type="file" name="image" id="imageInput" accept="image/jpeg, image/png">
+            </p>
+
+            <!-- Khung hiển thị xem trước hình ảnh -->
+            <p>
+                <img id="imagePreview" src="#" alt="Xem trước hình ảnh" style="display: none; width: 100px; height: 100px; object-fit: cover; border: 1px solid #ccc; margin-top: 5px;">
+            </p>
+
             <button type="submit">Lưu khách hàng</button>
         </form>
     </fieldset>
@@ -34,18 +45,44 @@
             <th>ID</th>
             <th>Họ tên</th>
             <th>Tuổi</th>
-           
+            <th>Hình ảnh</th>
         </tr>
         {% for cus in customers %}
         <tr>
             <td>{{ cus.id }}</td>
             <td>{{ cus.name }}</td>
             <td>{{ cus.age }}</td>
-     
+            <td>
+                {% if cus.image %}
+                    <img src="{{ cus.image }}" alt="{{ cus.name }}" width="50" height="50" style="object-fit: cover;">
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>
     <br>
     <a href="/">Về trang chủ</a>
+
+    <!-- Đoạn mã JavaScript xử lý hiển thị ảnh xem trước -->
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+
+        imageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Tạo một đường dẫn tạm thời cho file được chọn
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block'; // Hiển thị thẻ img lên
+                }
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.src = '#';
+                imagePreview.style.display = 'none'; // Ẩn đi nếu không có file
+            }
+        });
+    </script>
 </body>
 </html>

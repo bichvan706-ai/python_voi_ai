@@ -57,12 +57,10 @@ app.get('/customers/:id', async (req, res) => {
 });
 app.post('/customers/add', async (req, res) => {
     try {
-        const { id, name, age } = req.body;
-		console.log(id)
-		console.log(name)
-		console.log(age)
+        const { id, name, age, imgname } = req.body;
+		console.log(req)
 
-        // Kiểm tra dữ liệu bắt buộc
+       
         if (!name) {
             return res.status(400).json({ error: 'Tên khách hàng là bắt buộc!' });
         }
@@ -70,16 +68,15 @@ app.post('/customers/add', async (req, res) => {
         // 1. Kết nối vào database polyMartdb
         let pool = await sql.connect(dbConfig);
 
-        // 2. Thực thi câu lệnh SQL INSERT vào bảng customers
-        // Giả sử bảng customers có các cột: name, email, phone
         let result = await pool.request()
 			.input('id', sql.NVarChar, id)
             .input('name', sql.NVarChar, name)
             .input('age', sql.VarChar, age || '')
+			.input('img', sql.VarChar, imgname || '')
             .query(`
-                INSERT INTO customers (CustomerID, CustomerName, Age) 
+                INSERT INTO customers (CustomerID, CustomerName, Age, Images) 
                 OUTPUT INSERTED.* 
-                VALUES (@id,@name, @age)
+                VALUES (@id,@name, @age, @img)
             `);
 
         // Lấy thông tin bản ghi vừa được thêm thành công
@@ -89,6 +86,10 @@ app.post('/customers/add', async (req, res) => {
             success: true,
             message: 'Thêm khách hàng vào polyMartdb thành công!',
             data: newCustomer
+        });
+		return res.status(201).json({
+            success: true,
+            message: 'Thêm khách hàng vào polyMartdb thành công!'
         });
 
     } catch (error) {
